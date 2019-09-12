@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:course_table/configs.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 ///解析课程信息的字符串
 Map<String, dynamic> parse_course(String s) {
@@ -85,6 +90,31 @@ Map<String, dynamic> course_to_map(List<dynamic> list) {
   return course_db;
 }
 
-void save_course_table() async {
+void saveCourseTable(String content) async {
+  try {
+    final dbPath = (await getApplicationDocumentsDirectory()).path + dbName;
+    print(dbPath);
+    var list = parse_course_table(content);
+    var course = course_to_map(list);
+    final JSON = JsonCodec();
+    File file = File(dbPath);
+    await file.writeAsString(JSON.encode(course));
+    print(JSON.encode(course));
+    print("success");
+  } catch(e) {
+    print("error");
+  }
+}
 
+Future<Map<String, dynamic>> getTableData() async {
+    final dbPath = (await getApplicationDocumentsDirectory()).path + dbName;
+    File file = File(dbPath);
+    if(!(await file.exists())) return null;
+    try {
+      var json = await file.readAsString();
+      final JSON = JsonCodec();
+      return JSON.decode(json);
+    } catch(e) {
+      return null;
+    }
 }
