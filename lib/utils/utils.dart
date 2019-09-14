@@ -118,4 +118,3 @@ Future<Map<String, dynamic>> getTableData() async {
       return null;
     }
 }
-
