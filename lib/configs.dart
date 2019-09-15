@@ -1,2 +1,2 @@
-final dbName = "db.json";
+final dbName = "/db.json";
 final weekIndex = "/wi.txt";

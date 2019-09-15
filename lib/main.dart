@@ -25,13 +25,10 @@ class MyApp extends StatelessWidget {
       title: 'course table',
       theme: new ThemeData(
         primarySwatch: Colors.blue,
+//        primaryColor: Colors.blue,
       ),
       home: new MainPage(),
       debugShowMaterialGrid: false,
     );
   }
 }
-
-
-
-

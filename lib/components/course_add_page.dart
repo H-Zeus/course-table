@@ -1,39 +1,66 @@
 import 'package:course_table/utils/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:course_table/utils/utils.dart';
 
-//class CourseAddPage extends StatefulWidget {
-//  CourseAddPage({Key key}) : super(key: key);
-//
-//  @override
-//  _CourseAddPage createState() => new _CourseAddPage();
-//}
 
-class CourseAddPage extends StatelessWidget {
-  final TextEditingController _controller = new TextEditingController();
+class CourseAddPage extends StatefulWidget {
+  @override
+  _CourseAddPage createState() => _CourseAddPage();
+}
 
-  void _onButtonPressed() async {
-    await saveCourseTable(_controller.text);
-    await Provider.update(this);
+class _CourseAddPage extends State<CourseAddPage> {
+
+  String text = "";
+
+  void _onButtonPressed(BuildContext context) async {
+    bool result = false;
+    if(this.text != null && this.text != "") {
+      result = await Provider.update(this.text);
+    }
+    final successInfo = SnackBar(
+      content:  Text('添加成功'),
+      backgroundColor: Theme.of(context).primaryColor,
+      duration:Duration(seconds: 5),// 持续时间
+    );
+    final failureInfo = SnackBar(
+      content: Text("添加失败"),
+      backgroundColor: Theme.of(context).primaryColor,
+      duration: Duration(seconds: 5),
+    );
+    if(result) {
+      Scaffold.of(context).showSnackBar(successInfo);
+    } else {
+      Scaffold.of(context).showSnackBar(failureInfo);
+    }
   }
 
   Widget _inputAndButton(BuildContext context) {
     return new Container(
       child: new Column(
         children: <Widget>[
-          new TextField(
-            controller: _controller,
-            decoration: new InputDecoration(
-              hintText: '请输入课表的html代码',
-              hintStyle: new TextStyle(color: Colors.grey),
+          new Container(
+            child: new TextField(
+//              controller: _controller, /// 这里不适用controller的原因是当收起键盘时，输入的东西会被清空
+              decoration: new InputDecoration(
+                hintText: '请输入强制课表所在页的html代码',
+                hintStyle: new TextStyle(color: Colors.grey),
+              ),
+              onChanged: (String text){
+                setState(() {
+                  this.text = text;
+                });
+              },
+              autofocus: false,
             ),
+            margin: EdgeInsets.all(10.0),
           ),
           new RaisedButton(
-            onPressed: _onButtonPressed,
+            onPressed: () {
+              _onButtonPressed(context);
+            },
             child: new Container(
-              child: Text('导入课表', style: TextStyle(fontSize: 20)),
+              child: Text('导入课表', style: TextStyle(fontSize: 20, color: Colors.white)),
             ),
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
           ),
         ],
       ),
@@ -42,13 +69,14 @@ class CourseAddPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: new Scaffold(
+    print("congjian");
+    return new Scaffold(
         appBar: new AppBar(
           title: new Text("导入课表"),
         ),
-        body: _inputAndButton(context),
-      ),
+        body: new Builder(builder: (BuildContext context){
+          return _inputAndButton(context);
+        }),
     );
   }
 }
